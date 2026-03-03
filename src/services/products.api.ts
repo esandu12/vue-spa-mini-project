@@ -1,14 +1,8 @@
-import type { Product, ProductsResponse } from "../types/product"
-import { getJSON } from "./http"
+import type { ProductsResponse } from "../types/product"
+import { getJson } from "./http"
 
-export function fetchProducts(): Promise<ProductsResponse> {
-  return getJSON<ProductsResponse>("/products")
-}
+const BASE_URL = "https://dummyjson.com"
 
-export function fetchProductById(id: number): Promise<Product> {
-  return getJSON<Product>(`/products/${id}`)
-}
-
-export function fetchCategories(): Promise<string[]> {
-  return getJSON<string[]>("/products/categories")
+export function fetchProducts() {
+  return getJson<ProductsResponse>(`${BASE_URL}/products?limit=30`)
 }

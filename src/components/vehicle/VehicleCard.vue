@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Product } from "../../types/product"
-import { getVehicleBrand, getVehicleCondition, getVehicleType } from "../../utils/vehicle"
 
 defineProps<{
   vehicle: Product
@@ -8,9 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <article
-    class="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
-  >
+  <article class="overflow-hidden rounded-2xl border bg-white shadow-sm">
     <img
       :src="vehicle.thumbnail"
       :alt="vehicle.title"
@@ -18,43 +15,23 @@ defineProps<{
       loading="lazy"
     />
 
-    <div class="space-y-2 p-4">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-gray-500">
-          {{ getVehicleBrand(vehicle) }}
-        </span>
+    <div class="p-4">
+      <h3 class="line-clamp-1 text-base font-semibold">{{ vehicle.title }}</h3>
 
-        <span
-          class="rounded-full px-2 py-1 text-xs font-semibold"
-          :class="
-            getVehicleCondition(vehicle) === 'Used'
-              ? 'bg-yellow-100 text-yellow-800'
-              : 'bg-green-100 text-green-800'
-          "
-        >
-          {{ getVehicleCondition(vehicle) }}
-        </span>
-      </div>
-
-      <h3 class="line-clamp-1 text-base font-semibold">
-        {{ vehicle.title }}
-      </h3>
-
-      <p class="text-sm text-gray-600">
-        Type: <span class="font-medium">{{ getVehicleType(vehicle) }}</span>
+      <p class="mt-1 text-sm text-gray-600">
+        {{ vehicle.brand }} • ⭐ {{ vehicle.rating }}
       </p>
 
-      <div class="flex items-center justify-between">
-        <p class="text-lg font-bold">$ {{ vehicle.price }}</p>
-        <p class="text-sm text-gray-600">⭐ {{ vehicle.rating }}</p>
-      </div>
+      <div class="mt-3 flex items-center justify-between">
+        <span class="text-lg font-bold">${{ vehicle.price }}</span>
 
-      <button
-        class="w-full rounded-xl bg-black px-4 py-2 text-white hover:opacity-90"
-        type="button"
-      >
-        Reserve Test Drive
-      </button>
+        <button
+          class="rounded-xl bg-black px-3 py-2 text-sm font-medium text-white hover:opacity-90"
+          type="button"
+        >
+          Explore More
+        </button>
+      </div>
     </div>
   </article>
 </template>
