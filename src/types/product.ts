@@ -1,9 +1,8 @@
-export interface Product {
+export type Product = {
   id: number
   title: string
   description: string
   price: number
-  discountPercentage: number
   rating: number
   stock: number
   brand: string
@@ -12,7 +11,7 @@ export interface Product {
   images: string[]
 }
 
-export interface ProductsResponse {
+export type ProductsResponse = {
   products: Product[]
   total: number
   skip: number

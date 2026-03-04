@@ -1,15 +1,16 @@
-import type { LoginRequest, LoginResponse } from "../types/auth"
+import { httpPost } from "./http"
 
-export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const res = await fetch("https://dummyjson.com/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  })
+export type LoginResponse = {
+  id: number
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  gender: string
+  image: string
+  token: string
+}
 
-  if (!res.ok) {
-    throw new Error("Login failed")
-  }
-
-  return (await res.json()) as LoginResponse
+export async function login(username: string, password: string) {
+  return httpPost<LoginResponse>("/auth/login", { username, password })
 }
