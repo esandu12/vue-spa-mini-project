@@ -31,15 +31,13 @@ async function load() {
 }
 
 function handleReserve() {
-  // must be logged in
   if (!auth.isAuthenticated) {
     router.push("/login")
     return
   }
-
   if (!vehicle.value) return
   reservationStore.add(vehicle.value)
-  router.push("/reservations")
+  router.push(`/reserve/${vehicle.value.id}`)
 }
 
 onMounted(() => {

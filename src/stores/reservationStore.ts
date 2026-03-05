@@ -1,16 +1,26 @@
 import { defineStore } from "pinia"
 import type { Product } from "../types/product"
 
+export type CustomerInfo = {
+  fullName: string
+  phone: string
+  email: string
+  preferredDate?: string
+  preferredTime?: string
+  message?: string
+}
+
 export type Reservation = {
   vehicle: Product
-  reservedAt: string // ISO
+  reservedAt: string
+  customer?: CustomerInfo
 }
 
 type State = {
   reservations: Reservation[]
 }
 
-const STORAGE_KEY = "autoreserve_reservations_v1"
+const STORAGE_KEY = "autoreserve_reservations_v2"
 
 export const useReservationStore = defineStore("reservation", {
   state: (): State => ({
@@ -19,13 +29,29 @@ export const useReservationStore = defineStore("reservation", {
 
   getters: {
     count: (state) => state.reservations.length,
+
+    getVehicleById: (state) => (id: number) => {
+      const r = state.reservations.find(x => x.vehicle.id === id)
+      return r?.vehicle ?? null
+    },
+
     has: (state) => (id: number) => state.reservations.some(r => r.vehicle.id === id),
   },
 
   actions: {
     add(vehicle: Product) {
       if (this.reservations.some(r => r.vehicle.id === vehicle.id)) return
-      this.reservations.unshift({ vehicle, reservedAt: new Date().toISOString() })
+      this.reservations.unshift({
+        vehicle,
+        reservedAt: new Date().toISOString(),
+      })
+      this.saveToLocalStorage()
+    },
+
+    confirmReservation(vehicleId: number, customer: CustomerInfo) {
+      const r = this.reservations.find(x => x.vehicle.id === vehicleId)
+      if (!r) return
+      r.customer = customer
       this.saveToLocalStorage()
     },
 
@@ -48,10 +74,9 @@ export const useReservationStore = defineStore("reservation", {
       if (!raw) return
       try {
         const parsed = JSON.parse(raw) as Reservation[]
-        // basic validation
         if (Array.isArray(parsed)) this.reservations = parsed
       } catch {
-        // ignore corrupted storage
+        // ignore
       }
     },
   },
