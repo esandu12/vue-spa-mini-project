@@ -1,32 +1,29 @@
 import { defineStore } from "pinia"
 import type { LoginResponse } from "../services/auth.api"
 
-type State = {
-  user: LoginResponse | null
-}
-
-const AUTH_KEY = "autoreserve_auth_v1"
+const STORAGE_KEY = "autoreserve_user"
 
 export const useAuthStore = defineStore("auth", {
-  state: (): State => ({
-    user: null,
+  state: () => ({
+    user: null as LoginResponse | null,
   }),
 
   getters: {
-    isAuthenticated: (s) => s.user !== null,
+    isAuthenticated: (state) => state.user !== null,
   },
 
   actions: {
     setUser(user: LoginResponse) {
       this.user = user
-      localStorage.setItem(AUTH_KEY, JSON.stringify(user))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
     },
 
     load() {
-      const raw = localStorage.getItem(AUTH_KEY)
+      const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
+
       try {
-        this.user = JSON.parse(raw) as LoginResponse
+        this.user = JSON.parse(raw)
       } catch {
         this.user = null
       }
@@ -34,7 +31,7 @@ export const useAuthStore = defineStore("auth", {
 
     logout() {
       this.user = null
-      localStorage.removeItem(AUTH_KEY)
+      localStorage.removeItem(STORAGE_KEY)
     },
   },
 })

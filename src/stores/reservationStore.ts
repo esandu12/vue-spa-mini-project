@@ -16,47 +16,46 @@ export type Reservation = {
   customer?: CustomerInfo
 }
 
-type State = {
-  reservations: Reservation[]
-}
-
-const STORAGE_KEY = "autoreserve_reservations_v2"
+const STORAGE_KEY = "autoreserve_reservations"
 
 export const useReservationStore = defineStore("reservation", {
-  state: (): State => ({
-    reservations: [],
+  state: () => ({
+    reservations: [] as Reservation[],
   }),
 
   getters: {
     count: (state) => state.reservations.length,
 
-    getVehicleById: (state) => (id: number) => {
-      const r = state.reservations.find(x => x.vehicle.id === id)
-      return r?.vehicle ?? null
-    },
-
-    has: (state) => (id: number) => state.reservations.some(r => r.vehicle.id === id),
+    has: (state) => (id: number) =>
+      state.reservations.some((r) => r.vehicle.id === id),
   },
 
   actions: {
     add(vehicle: Product) {
-      if (this.reservations.some(r => r.vehicle.id === vehicle.id)) return
+      if (this.reservations.some((r) => r.vehicle.id === vehicle.id)) return
+
       this.reservations.unshift({
         vehicle,
         reservedAt: new Date().toISOString(),
       })
+
       this.saveToLocalStorage()
     },
 
     confirmReservation(vehicleId: number, customer: CustomerInfo) {
-      const r = this.reservations.find(x => x.vehicle.id === vehicleId)
+      const r = this.reservations.find((x) => x.vehicle.id === vehicleId)
       if (!r) return
+
       r.customer = customer
+
       this.saveToLocalStorage()
     },
 
     remove(vehicleId: number) {
-      this.reservations = this.reservations.filter(r => r.vehicle.id !== vehicleId)
+      this.reservations = this.reservations.filter(
+        (r) => r.vehicle.id !== vehicleId
+      )
+
       this.saveToLocalStorage()
     },
 
@@ -72,11 +71,11 @@ export const useReservationStore = defineStore("reservation", {
     loadFromLocalStorage() {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
+
       try {
-        const parsed = JSON.parse(raw) as Reservation[]
-        if (Array.isArray(parsed)) this.reservations = parsed
+        this.reservations = JSON.parse(raw)
       } catch {
-        // ignore
+        this.reservations = []
       }
     },
   },
