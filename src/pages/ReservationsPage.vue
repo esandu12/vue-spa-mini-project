@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router"
 import { useReservationStore } from "../stores/reservationStore"
+import { getVehicleDisplayName, getVehicleDisplayImage } from "../utils/vehicleDisplay"
 
 const store = useReservationStore()
 store.loadFromLocalStorage()
@@ -11,56 +12,54 @@ store.loadFromLocalStorage()
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold">Reserved Vehicles</h2>
 
-      <RouterLink to="/" class="text-sm text-blue-600 hover:underline">
+      <RouterLink to="/" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
         ← Back to vehicles
       </RouterLink>
     </div>
 
-    <!-- Empty state -->
     <div
       v-if="store.reservations.length === 0"
-      class="rounded-2xl border bg-white p-8 text-center"
+      class="rounded-2xl border bg-white p-8 text-center dark:border-gray-700 dark:bg-gray-800"
     >
-      <p class="text-gray-600">No reservations yet. Reserve a vehicle for a test drive.</p>
+      <p class="text-lg font-medium">No reservations yet</p>
+      <p class="text-gray-500 dark:text-gray-300">
+        Reserve a vehicle to schedule a test drive.
+      </p>
 
       <RouterLink
         to="/"
-        class="mt-4 inline-block rounded-xl bg-black px-4 py-2 text-white hover:opacity-90"
+        class="mt-4 inline-block rounded-lg bg-black px-4 py-2 text-white hover:opacity-90 dark:bg-white dark:text-black"
       >
         Browse Vehicles
       </RouterLink>
     </div>
 
-    <!-- List -->
     <div v-else class="space-y-4">
       <div
         v-for="r in store.reservations"
         :key="r.vehicle.id"
-        class="rounded-2xl border bg-white p-4 flex gap-4 items-start"
+        class="flex items-start gap-4 rounded-2xl border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
       >
-        <!-- Left image -->
         <img
-          :src="r.vehicle.thumbnail"
-          :alt="r.vehicle.title"
+          :src="getVehicleDisplayImage(r.vehicle)"
+          :alt="getVehicleDisplayName(r.vehicle)"
           class="h-24 w-24 rounded-xl object-cover"
         />
 
-        <!-- Middle content -->
         <div class="flex-1 space-y-1">
-          <h3 class="text-lg font-semibold">{{ r.vehicle.title }}</h3>
+          <h3 class="text-lg font-semibold">{{ getVehicleDisplayName(r.vehicle) }}</h3>
 
-          <p class="text-sm text-gray-600 line-clamp-2">
-            {{ r.vehicle.description }}
+          <p class="line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
+            Premium vehicle reservation ready for test drive scheduling.
           </p>
 
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-500 dark:text-gray-400">
             Reserved: {{ new Date(r.reservedAt).toLocaleString() }}
           </p>
 
-           
           <div
             v-if="r.customer"
-            class="mt-3 rounded-xl border bg-gray-50 p-3 text-sm text-gray-700 space-y-1"
+            class="mt-3 space-y-1 rounded-xl border bg-gray-50 p-3 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
           >
             <p><b>Name:</b> {{ r.customer.fullName }}</p>
             <p><b>Phone:</b> {{ r.customer.phone }}</p>
@@ -79,11 +78,10 @@ store.loadFromLocalStorage()
             </p>
           </div>
 
-          <!-- Actions -->
           <div class="pt-2 flex gap-4 text-sm">
             <RouterLink
               :to="`/vehicle/${r.vehicle.id}`"
-              class="text-blue-600 hover:underline"
+              class="text-blue-600 hover:underline dark:text-blue-400"
             >
               View details
             </RouterLink>
@@ -98,14 +96,12 @@ store.loadFromLocalStorage()
           </div>
         </div>
 
-        <!-- Right price -->
         <div class="text-right font-bold">$ {{ r.vehicle.price }}</div>
       </div>
 
-      <!-- Clear all button -->
       <button
         type="button"
-        class="rounded-xl bg-red-600 px-4 py-2 text-white hover:opacity-90 w-fit"
+        class="w-fit rounded-xl bg-red-600 px-4 py-2 text-white hover:opacity-90"
         @click="store.clear()"
       >
         Clear all

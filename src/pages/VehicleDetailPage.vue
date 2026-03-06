@@ -67,6 +67,7 @@ watch(vehicle, (newVehicle) => {
 
 onMounted(() => {
   auth.load()
+  reservationStore.loadFromLocalStorage()
   void load()
 })
 </script>

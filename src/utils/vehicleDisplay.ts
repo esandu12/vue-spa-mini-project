@@ -12,7 +12,7 @@ const VEHICLE_MODELS = [
   "Executive LX",
   "Apex Drive",
   "Summit GT",
-]
+] as const
 
 const VEHICLE_IMAGES = [
   "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80",
@@ -23,25 +23,34 @@ const VEHICLE_IMAGES = [
   "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80",
   "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80",
   "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80",
-]
+] as const
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1494976388901-7505adf3d55b?auto=format&fit=crop&w=1200&q=80"
+
+function pickImage(index: number): string {
+  return VEHICLE_IMAGES[index] ?? FALLBACK_IMAGE
+}
 
 export function getVehicleDisplayName(product: Product): string {
   const brand = getVehicleBrand(product)
-  const model = VEHICLE_MODELS[product.id % VEHICLE_MODELS.length]
+  const model = VEHICLE_MODELS[product.id % VEHICLE_MODELS.length] ?? "Signature"
   const type = getVehicleType(product)
   return `${brand} ${model} ${type}`
 }
 
 export function getVehicleDisplayImage(product: Product): string {
-  return VEHICLE_IMAGES[product.id % VEHICLE_IMAGES.length]
+  const index = product.id % VEHICLE_IMAGES.length
+  return pickImage(index)
 }
 
 export function getVehicleGallery(product: Product): string[] {
   const start = product.id % VEHICLE_IMAGES.length
+
   return [
-    VEHICLE_IMAGES[start % VEHICLE_IMAGES.length],
-    VEHICLE_IMAGES[(start + 1) % VEHICLE_IMAGES.length],
-    VEHICLE_IMAGES[(start + 2) % VEHICLE_IMAGES.length],
-    VEHICLE_IMAGES[(start + 3) % VEHICLE_IMAGES.length],
+    pickImage(start % VEHICLE_IMAGES.length),
+    pickImage((start + 1) % VEHICLE_IMAGES.length),
+    pickImage((start + 2) % VEHICLE_IMAGES.length),
+    pickImage((start + 3) % VEHICLE_IMAGES.length),
   ]
 }

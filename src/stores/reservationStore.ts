@@ -28,6 +28,11 @@ export const useReservationStore = defineStore("reservation", {
 
     has: (state) => (id: number) =>
       state.reservations.some((r) => r.vehicle.id === id),
+
+    getVehicleById: (state) => (id: number) => {
+      const found = state.reservations.find((r) => r.vehicle.id === id)
+      return found ? found.vehicle : null
+    },
   },
 
   actions: {
@@ -43,11 +48,10 @@ export const useReservationStore = defineStore("reservation", {
     },
 
     confirmReservation(vehicleId: number, customer: CustomerInfo) {
-      const r = this.reservations.find((x) => x.vehicle.id === vehicleId)
-      if (!r) return
+      const reservation = this.reservations.find((r) => r.vehicle.id === vehicleId)
+      if (!reservation) return
 
-      r.customer = customer
-
+      reservation.customer = customer
       this.saveToLocalStorage()
     },
 
@@ -55,7 +59,6 @@ export const useReservationStore = defineStore("reservation", {
       this.reservations = this.reservations.filter(
         (r) => r.vehicle.id !== vehicleId
       )
-
       this.saveToLocalStorage()
     },
 
@@ -73,7 +76,7 @@ export const useReservationStore = defineStore("reservation", {
       if (!raw) return
 
       try {
-        this.reservations = JSON.parse(raw)
+        this.reservations = JSON.parse(raw) as Reservation[]
       } catch {
         this.reservations = []
       }

@@ -12,16 +12,8 @@ import { useAuthStore } from "../stores/authStore"
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    {
-      path: "/",
-      name: "home",
-      component: HomePage,
-    },
-    {
-      path: "/vehicle/:id",
-      name: "vehicle-detail",
-      component: VehicleDetailPage,
-    },
+    { path: "/", name: "home", component: HomePage },
+    { path: "/vehicle/:id", name: "vehicle-detail", component: VehicleDetailPage },
     {
       path: "/reservations",
       name: "reservations",
@@ -40,11 +32,7 @@ export const router = createRouter({
       component: ReservationSuccessPage,
       meta: { requiresAuth: true },
     },
-    {
-      path: "/login",
-      name: "login",
-      component: LoginPage,
-    },
+    { path: "/login", name: "login", component: LoginPage },
   ],
 })
 
